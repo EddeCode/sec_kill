@@ -1,7 +1,7 @@
-package com.boo.mapper;
+package com.boo.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.boo.entity.UserInfo;
+import com.boo.entity.user.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @Description
  */
 @Mapper
-public interface UserInfoMapper extends BaseMapper<UserInfo> {
+public interface UserMapper extends BaseMapper<User> {
 }

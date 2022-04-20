@@ -1,13 +1,18 @@
 package com.boo.controller;
 
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.boo.entity.ResponseResult;
+import com.boo.entity.user.User;
+import com.boo.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.Map;
+import java.time.Duration;
+import java.util.HashMap;
 
 /**
  * @author song
@@ -15,43 +20,49 @@ import java.util.Map;
  * @Description
  */
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
-    @RequestMapping("/")
-    public Map<String,Object> register()
-    {
-            return Collections.singletonMap("msg","hello");
+
+    @Autowired
+    UserService userService;
+
+
+    @PostMapping("/login")
+    public ResponseResult login(@RequestBody User user, HttpServletResponse response) throws JsonProcessingException {
+        HashMap<String, Object> map = new HashMap<>();
+        String jwt = userService.login(user);
+        map.put("jwt", jwt);
+        ResponseCookie responseCookie = ResponseCookie
+                .from("token", jwt)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(((int) Duration.ofDays(7).toSeconds()))
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE,responseCookie.toString());
+        return new ResponseResult(200, "登录成功", map);
     }
 
-    @RequestMapping("/index")
-    public String index()
-    {
-        return "index";
+    @RequestMapping("/register")
+    public ResponseResult register(@RequestBody User user) {
+
+        return userService.register(user, user.getCode());
     }
 
-    @RequestMapping("/common")
-    public String common()
-    {
-        return "common";
+    @RequestMapping("/getCode")
+    public ResponseResult code(String email) {
+        return userService.getCode(email);
     }
 
-    @RequestMapping("/admin")
-    public String admin()
-    {
-        return "admin";
+    @RequestMapping("/logout")
+    public ResponseResult logout(HttpServletResponse response) {
+        String logout = userService.logout();
+        Cookie cookie = new Cookie("token", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return new ResponseResult(200, logout);
     }
 
-    @RequestMapping("/403")
-    public Map A03(HttpServletResponse response)
-    {
-        response.setStatus(403);
-        return  Collections.singletonMap("msg",403);
-    }
-
-    @RequestMapping("/se")
-    @PreAuthorize("hasAnyAuthority('common')")
-    public Map aTest()
-    {
-        return Collections.singletonMap("msg","se");
-    }
 }

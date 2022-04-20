@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.boo.mapper.ProductMapper">
+
+
+    <select id="getAllParamNameByPid" resultType="com.boo.entity.Param">
+        SELECT * FROM sys_param WHERE prod_id  = #{pid};
+    </select>
+    <select id="getAllParamsById" resultType="com.boo.entity.SubParam">
+        SELECT * FROM sys_sub_param WHERE param_id  = #{pid};
+    </select>
+
+</mapper>

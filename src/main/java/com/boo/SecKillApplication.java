@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 /**
@@ -16,7 +17,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 public class SecKillApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SecKillApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(SecKillApplication.class, args);
+        System.out.println("Run Successful");
     }
 
 }
