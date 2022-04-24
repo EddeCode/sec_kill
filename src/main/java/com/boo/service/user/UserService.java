@@ -19,4 +19,5 @@ public interface UserService extends IService<User> {
 
     ResponseResult getCode(String email);
 
+    boolean saveOrUpdateAvatar(byte[] bytes);
 }

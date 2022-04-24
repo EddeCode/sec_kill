@@ -47,44 +47,21 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        //1 先获取jwt，从cookie里
-        Cookie[] cookies = request.getCookies();
-        //如果cookie不存在，直接放行
-        if (Objects.isNull(cookies)) {
+        //1 先获取header 中的 jwt
+        String jwtToken = request.getHeader("token");
+        if (!StringUtils.hasText(jwtToken)) {
             filterChain.doFilter(request, response);
-            log.info("no cookies");
+            log.info("no token");
             return;
         }
-        String jwt = "";
-        for (Cookie cookie : cookies) {
-            if ("token".equals(cookie.getName())) {
-                jwt = cookie.getValue();
-                break;
-            }
-        }
-        //2 如果不存在jwt 放行
-        if (!StringUtils.hasText(jwt)) {
-            //TODO 测试结束后删除日志
-            filterChain.doFilter(request, response);
-            log.info("no jwt in cookies");
-            return;
-        }
-        //3 存在则解析 解析失败后放行打印日志
+        //2 存在则解析 解析失败后放行打印日志
         String s;
         try {
-            Claims claims = JwtUtil.parseJWT(jwt);
+            Claims claims = JwtUtil.parseJWT(jwtToken);
             s = claims.getSubject();
         } catch (ExpiredJwtException e) {
             // e.printStackTrace();
             log.info("JWT ExpiredJwtException");
-            ResponseCookie responseCookie = ResponseCookie
-                    .from("token", null)
-                    .secure(true)
-                    .sameSite("None")
-                    .path("/")
-                    .maxAge(0)
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
             filterChain.doFilter(request, response);
             return;
         }

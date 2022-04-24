@@ -1,9 +1,7 @@
 package com.boo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.boo.entity.Param;
 import com.boo.entity.Product;
-import com.boo.entity.SubParam;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -16,12 +14,10 @@ import java.util.Map;
  */
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {
-    @Select("SELECT id,prod_name from sys_prod")
+    @Select("SELECT id,prod_name,img,price,sec_flag from sys_prod")
     List<Product> getSummaryProducts();
 
-    List<Param> getAllParamNameByPid(Long pid);
 
 
 
-    List<SubParam> getAllParamsById(Long id);
 }

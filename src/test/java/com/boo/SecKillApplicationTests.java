@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import java.util.Map;
 
@@ -40,7 +41,7 @@ class SecKillApplicationTests {
 
     @Test
     void pTest() {
-        System.out.println(productMapper.getAllParamNameByPid(1L));
+        System.out.println(productMapper.getSummaryProducts());
     }
     @Test
     void spTest()
@@ -62,6 +63,13 @@ class SecKillApplicationTests {
     @Test
     void testMaps() throws JsonProcessingException {
 
-        System.out.println( objectMapper.writeValueAsString(prodService.getParamsMap(1L)));
+    }
+
+    @Autowired
+    DefaultRedisScript<Long> defaultRedisScript;
+    @Test
+    void res()
+    {
+        System.out.println(defaultRedisScript.getScriptAsString());
     }
 }

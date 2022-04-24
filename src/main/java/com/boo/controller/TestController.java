@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TestController {
-    // @PreAuthorize("hasAnyAuthority('sys.non')")
+    @PreAuthorize("hasAnyAuthority('sys.scan')")
     @RequestMapping("/hello")
     public ResponseResult hello() {
         return new ResponseResult(200, "ok", "秒杀接口测试");

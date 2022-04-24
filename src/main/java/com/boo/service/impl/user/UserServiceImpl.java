@@ -81,7 +81,7 @@ public class UserServiceImpl
         LoginUserDetails loginUserDetails = (LoginUserDetails) authentication.getPrincipal();
         Long id = loginUserDetails.getUser().getId();
         redisTemplate.delete("login:" + id);
-        return "注销成功";
+        return "id:"+id+"注销成功";
     }
 
     @Override
@@ -151,6 +151,15 @@ public class UserServiceImpl
         redisTemplate.opsForValue().set(key, rand, Duration.ofDays(1));
         //TODO 发送邮箱 不返回验证码
         return new ResponseResult(200, "ok", rand);
+    }
+
+    @Override
+    public boolean saveOrUpdateAvatar(byte[] bytes) {
+        UsernamePasswordAuthenticationToken authentication =
+                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        LoginUserDetails loginUserDetails = (LoginUserDetails) authentication.getPrincipal();
+        User user = loginUserDetails.getUser();
+        return baseMapper.saveOrUpdateAvatarBytes(user.getId(),bytes);
     }
 
 }

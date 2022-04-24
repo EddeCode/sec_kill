@@ -1,17 +1,19 @@
 package com.boo.controller;
 
 import com.boo.entity.ResponseResult;
+import com.boo.entity.user.LoginUserDetails;
 import com.boo.entity.user.User;
 import com.boo.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.time.Duration;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -29,18 +31,10 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseResult login(@RequestBody User user, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseResult login(@RequestBody User user) throws JsonProcessingException {
         HashMap<String, Object> map = new HashMap<>();
         String jwt = userService.login(user);
         map.put("jwt", jwt);
-        ResponseCookie responseCookie = ResponseCookie
-                .from("token", jwt)
-                .secure(true)
-                .sameSite("None")
-                .path("/")
-                .maxAge(((int) Duration.ofDays(7).toSeconds()))
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE,responseCookie.toString());
         return new ResponseResult(200, "登录成功", map);
     }
 
@@ -58,11 +52,15 @@ public class UserController {
     @RequestMapping("/logout")
     public ResponseResult logout(HttpServletResponse response) {
         String logout = userService.logout();
-        Cookie cookie = new Cookie("token", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
         return new ResponseResult(200, logout);
+    }
+
+
+    @RequestMapping("/avatar")
+    public ResponseResult uploadAvatar(@RequestPart("headerImg") MultipartFile avatar) throws IOException {
+        boolean b = userService.saveOrUpdateAvatar(avatar.getBytes());
+        avatar.transferTo(new File("d:/test.jpg"));
+        return new ResponseResult(200, "ok", b);
     }
 
 }
