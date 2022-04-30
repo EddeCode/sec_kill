@@ -7,6 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.scripting.support.StaticScriptSource;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * @author song
@@ -14,6 +15,13 @@ import org.springframework.scripting.support.StaticScriptSource;
  */
 @Configuration
 public class RootConfig {
+    // @Bean
+    // public ServerEndpointExporter serverEndpointExporter() {
+    //
+    //     return new ServerEndpointExporter();
+    // }
+
+
     @Bean
     public DefaultRedisScript<Long> redisScript() {
         DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();

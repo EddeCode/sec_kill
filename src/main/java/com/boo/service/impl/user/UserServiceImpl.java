@@ -2,8 +2,8 @@ package com.boo.service.impl.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.boo.entity.user.LoginUserDetails;
 import com.boo.entity.ResponseResult;
+import com.boo.entity.user.LoginUserDetails;
 import com.boo.entity.user.User;
 import com.boo.mapper.user.UserMapper;
 import com.boo.service.user.UserService;
@@ -69,6 +69,7 @@ public class UserServiceImpl
 
         LoginUserDetails loginUser = (LoginUserDetails) authenticate.getPrincipal();
         Long id = loginUser.getUser().getId();
+        user.setId(id);
         redisTemplate.opsForValue().set("login:" + id, mapper.writeValueAsString(loginUser),
                 Duration.ofDays(7));
         return JwtUtil.createJWT(id.toString());
@@ -81,7 +82,7 @@ public class UserServiceImpl
         LoginUserDetails loginUserDetails = (LoginUserDetails) authentication.getPrincipal();
         Long id = loginUserDetails.getUser().getId();
         redisTemplate.delete("login:" + id);
-        return "id:"+id+"注销成功";
+        return "id:" + id + "注销成功";
     }
 
     @Override
@@ -153,13 +154,15 @@ public class UserServiceImpl
         return new ResponseResult(200, "ok", rand);
     }
 
-    @Override
-    public boolean saveOrUpdateAvatar(byte[] bytes) {
+    private User getUserInSecurityContext() {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails loginUserDetails = (LoginUserDetails) authentication.getPrincipal();
-        User user = loginUserDetails.getUser();
-        return baseMapper.saveOrUpdateAvatarBytes(user.getId(),bytes);
+        return loginUserDetails.getUser();
     }
 
+    @Override
+    public User getUserInfo() {
+        return getUserInSecurityContext();
+    }
 }

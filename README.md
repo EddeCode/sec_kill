@@ -1,0 +1,4 @@
+- 登录注册使用springsecurity
+  - redis做登录后的用户缓存
+- redis负责秒杀的一致性
+- rabbitmq负责削峰 并且使用延迟队列解决超时未支付问题

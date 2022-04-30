@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.boo.entity.user.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+
+import javax.servlet.annotation.HandlesTypes;
+import java.sql.Blob;
 
 /**
  * @author song
@@ -13,7 +17,8 @@ import org.apache.ibatis.annotations.Update;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    @Insert("replace into sys_avatar (user_id,avatar_bytes) " +
-            "values( #{id},#{bytes} );")
-    boolean saveOrUpdateAvatarBytes(Long id, byte[] bytes);
+
+
+
+
 }

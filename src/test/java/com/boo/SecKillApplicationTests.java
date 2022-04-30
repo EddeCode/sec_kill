@@ -13,14 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SecKillApplicationTests {
 
     @Autowired
     UserService service;
 
+    @Test
+    void getImg() {
+    }
     @Test
     void contextLoads() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
@@ -71,5 +77,14 @@ class SecKillApplicationTests {
     void res()
     {
         System.out.println(defaultRedisScript.getScriptAsString());
+    }
+
+
+    @Test
+    void parse() throws JsonProcessingException {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("userId",1);
+        map.put("msg",null);
+        System.out.println(objectMapper.writeValueAsString(map));
     }
 }
