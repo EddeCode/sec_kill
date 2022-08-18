@@ -1,8 +1,9 @@
 spring:
   profiles:
     active: dev
-  redis:
-    host: 39.105.6.92
-    port: 6379
-    password: "*#06#"
-
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 2048MB
+server:
+  port: 9037

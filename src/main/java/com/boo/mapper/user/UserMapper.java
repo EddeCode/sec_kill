@@ -1,14 +1,10 @@
 package com.boo.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boo.entity.user.User;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-
-import javax.servlet.annotation.HandlesTypes;
-import java.sql.Blob;
 
 /**
  * @author song
@@ -17,8 +13,5 @@ import java.sql.Blob;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-
-
-
 
 }

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Collections;
 
 /**
- * TODO
+ * TODO 发布确认 消费者确认
  * 后面可以把消费者模块单独分离出来
  *
  * @author song
@@ -15,29 +15,49 @@ import java.util.Collections;
  */
 @Configuration
 public class RabbitMqConfig {
-    public static final String DELAY_QUEUE = "snap.delay.queue";
-    public static final String DELAY_EXCHANGE = "snap.delay.exchange";
-    public static final String DELAY_ROUTING_KEY = "snap.delay.routing";
+    /**
+     * 通用延迟队列
+     */
+    public static final String DELAY_QUEUE = "delay.queue";
+    public static final String DELAY_SEC_QUEUE = "delay.sec.queue";
+    public static final String DELAY_EXCHANGE = "delay.exchange";
+    public static final String DELAY_ROUTING_KEY = "delay.routing";
+    public static final String DELAY_SEC_ROUTING_KEY = "delay.sec.routing";
 
     @Bean
-    public Queue insertQueue() {
+    public Queue buyQueue() {
         return QueueBuilder.durable(DELAY_QUEUE).build();
     }
 
     @Bean
-    public CustomExchange snapExchange() {
+    public Queue secQueue() {
+        return QueueBuilder.durable(DELAY_SEC_QUEUE).build();
+    }
+
+    @Bean
+    public CustomExchange delayExchange() {
         return new CustomExchange(DELAY_EXCHANGE,
                 "x-delayed-message",
                 true, false,
                 Collections.singletonMap("x-delayed-type", "direct"));
     }
 
+
     @Bean
-    public Binding insertQueueBindingSnapExchange() {
+    public Binding waitQueueBindingSnapExchange() {
         return BindingBuilder
-                .bind(insertQueue())
-                .to(snapExchange())
+                .bind(buyQueue())
+                .to(delayExchange())
                 .with(DELAY_ROUTING_KEY)
+                .noargs();
+    }
+
+    @Bean
+    public Binding secQueueBindingSnapExchange() {
+        return BindingBuilder
+                .bind(secQueue())
+                .to(delayExchange())
+                .with(DELAY_SEC_ROUTING_KEY)
                 .noargs();
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boo.mapper.PdClassMapper">
+    <select id="getClassJoinTagByPid" resultType="java.util.Map">
+        SELECT t_pd_class.`cid`, pid, mask_sec, class_name, tag_sec, content
+        FROM t_pd_class,
+             t_pd_tag
+        WHERE t_pd_class.`cid` = t_pd_tag.`cid`
+          AND pid = #{pid}
+    </select>
+</mapper>

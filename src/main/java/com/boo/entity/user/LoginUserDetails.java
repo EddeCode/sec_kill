@@ -1,9 +1,7 @@
 package com.boo.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,18 +16,21 @@ import java.util.stream.Collectors;
  * @date 2022/4/16 9:18
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class LoginUserDetails implements UserDetails {
 
-    private User user;
 
+    /**
+     * 自定义的用户 非security的
+     */
+    private User user;
     private List<String> stringList;
+
 
     public LoginUserDetails(User user, List<String> list) {
         this.user = user;
         this.stringList = list;
     }
+
 
     @JsonIgnore
     private List<GrantedAuthority> authorities;

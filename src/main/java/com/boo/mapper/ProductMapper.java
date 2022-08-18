@@ -1,9 +1,9 @@
 package com.boo.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.boo.entity.Product;
+import com.boo.entity.prod.Product;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Map;
@@ -14,10 +14,8 @@ import java.util.Map;
  */
 @Mapper
 public interface ProductMapper extends BaseMapper<Product> {
-    @Select("SELECT id,prod_name,img,price,sec_flag from sys_prod")
-    List<Product> getSummaryProducts();
-
-
+    @MapKey(value = "")
+    List<Map<String, Object>> getProdListAndMinPrice();
 
 
 }

@@ -1,18 +1,39 @@
 package com.boo.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.boo.entity.Product;
-import com.boo.entity.ResponseResult;
-import com.boo.entity.user.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.boo.entity.prod.Merchant;
+import com.boo.entity.prod.Product;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 
 public interface ProdService extends IService<Product> {
     List<Product> summaryList();
 
-    ResponseResult snapUp(User user, Long pid);
+    Integer cacheSecProduct();
 
-    Integer cacheSecProduct() ;
+
+    List<Product> getMerchantPds(Merchant merchant);
+
+
+    boolean getSecFlagByPid(Long pid);
+
+    void setSecTime(SecTimeInfo secTimeInfo);
+
+    String getSecTime(long pid);
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    class SecTimeInfo {
+        private long pid;
+        private boolean secFlag;
+        private Timestamp startStp;
+        private Timestamp endStp;
+    }
 }

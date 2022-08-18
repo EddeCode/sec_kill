@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.boo.mapper.ProductMapper">
+
+
+    <select id="getProdListAndMinPrice" resultType="java.util.Map">
+        SELECT id,
+               prod_name,
+               sec_flag,
+               create_time,
+               prod.img   AS img,
+               MIN(price) AS price
+        FROM t_prod AS prod,
+             t_pd_sku AS sku
+        WHERE prod.`id` = sku.`pid`
+          AND prod.`status` = 1
+        GROUP BY prod.`id`;
+    </select>
+</mapper>

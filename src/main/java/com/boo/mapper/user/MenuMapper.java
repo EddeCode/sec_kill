@@ -10,5 +10,8 @@ import java.util.List;
  */
 @Mapper
 public interface MenuMapper {
+
     List<String> getMenuList(Long userId);
+
+    List<String> getRoleList(Long userId);
 }

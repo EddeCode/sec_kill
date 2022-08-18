@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author song
  * @date 2022/4/25 10:30
  */
-@Controller
+// @Controller
+@Deprecated
 @Slf4j
 public class MessageController {
     @Autowired

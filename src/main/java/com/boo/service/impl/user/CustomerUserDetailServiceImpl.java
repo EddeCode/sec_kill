@@ -36,10 +36,14 @@ public class CustomerUserDetailServiceImpl implements UserDetailsService {
             log.info("can't find user");
             throw new UsernameNotFoundException("can't find user");
         }
-        log.info("get user success;username:{};password:{}", user.getUserName(),
-                user.getPassword());
         List<String> list = mapper.getMenuList(user.getId());
+        if(list.isEmpty()){
+            throw new RuntimeException("无权限");
+        }
+        List<String> roleList = mapper.getRoleList(user.getId());
+        list.addAll(roleList);
         return new LoginUserDetails(user, list);
 
     }
+
 }

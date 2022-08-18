@@ -1,99 +1,159 @@
 package com.boo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.boo.config.RabbitMqConfig;
-import com.boo.entity.Order;
-import com.boo.entity.Product;
-import com.boo.entity.ResponseResult;
+import com.boo.entity.prod.Merchant;
+import com.boo.entity.prod.PdSku;
+import com.boo.entity.prod.Product;
 import com.boo.entity.user.User;
 import com.boo.mapper.ProductMapper;
+import com.boo.service.IPdSkuService;
 import com.boo.service.ProdService;
+import com.boo.service.user.IOrderService;
+import com.boo.service.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
-import org.springframework.amqp.core.Message;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.security.AccessControlException;
+import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author song
  * @date 2022/4/19 16:00
  */
 @Service
+@Slf4j
 public class ProdServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProdService {
 
     @Override
     public List<Product> summaryList() {
-        return baseMapper.getSummaryProducts();
+        List<Map<String, Object>> list = baseMapper.getProdListAndMinPrice();
+        List<Product> products = new LinkedList<>();
+        list.forEach(map -> {
+            products.add(
+                    new Product(
+                            Long.parseLong(map.get("id").toString()),
+                            null,
+                            map.get("prod_name").toString(),
+                            true,
+                            Boolean.parseBoolean(map.get("sec_flag").toString()),
+                            Timestamp.valueOf(map.get("create_time").toString()),
+                            Double.parseDouble(map.get("price").toString()),
+                            map.get("img").toString()
+                    ));
+        });
+        return products;
     }
 
     @Autowired
     StringRedisTemplate redisTemplate;
-
     @Autowired
     RabbitTemplate rabbitTemplate;
-
     @Autowired
     DefaultRedisScript<Long> defaultRedisScript;
-
-
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    IPdSkuService skuService;
+    @Autowired
+    UserService service;
+    @Autowired
+    IOrderService orderService;
+    @Autowired
+    UserService userService;
 
     /**
-     * 2 hours
+     * 2 min
      */
-    private static final int DELAY = 1000 * 60 * 60 * 2;
+    private static final int DELAY = 1000 * 5;
 
-    @SneakyThrows
-    @Override
-    public ResponseResult snapUp(User user, Long pid) {
-        Long execute = redisTemplate.execute(defaultRedisScript, List.of(user.getId().toString(),
-                pid.toString()));
-        if (execute == 0L) {
-            return new ResponseResult(300, "秒杀结束");
-        }
-        if (execute == 1L) {
-            Order order = new Order(user, pid, LocalDateTime.now());
-            Message message = new Message(objectMapper.writeValueAsBytes(order));
-            rabbitTemplate.convertAndSend(
-                    RabbitMqConfig.DELAY_EXCHANGE,
-                    RabbitMqConfig.DELAY_ROUTING_KEY,
-                    message, correlationData -> {
-                        correlationData.getMessageProperties().setDelay(DELAY);
-                        return correlationData;
-                    });
-            return new ResponseResult(200, "秒杀成功");
-        }
-        if (execute == 2L) {
-            return new ResponseResult(300, "已经购买，请勿重复点击");
-        }
-        return new ResponseResult(403, "网络出问题啦~");
-    }
 
     /**
      * 获取秒杀商品并放置到redis中
+     *
      * @return 多少条商品
      */
     @Override
     public Integer cacheSecProduct() {
-        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Product::getStatus, true).eq(Product::getSecFlag, true);
-        List<Product> secProducts = baseMapper.selectList(wrapper);
-        secProducts.forEach(product -> {
-            redisTemplate.opsForValue().set(
-                    "commodity:" + product.getId(),
-                    product.getStock().toString(),
-                    Duration.ofDays(1)
-            );
-        });
-        return secProducts.size();
+        int count = 0;
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getSecFlag, true)
+                .eq(Product::getStatus, true)
+                .select(Product::getId);
+        List<Product> products = this.list(queryWrapper);
+        for (Product pd : products) {
+            List<PdSku> skus = skuService.getSkuByPid(pd.getId());
+            count += skus.size();
+            skus.forEach(sku -> {
+                redisTemplate.opsForValue().set(
+                        "commodity:" + sku.getPid() + ":" + sku.getMask(),
+                        sku.getStock().toString()
+                );
+            });
+        }
+        return count;
     }
+
+
+
+
+    @Override
+    public List<Product> getMerchantPds(Merchant merchant) {
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Product::getMid, merchant.getId());
+        return baseMapper.selectList(wrapper);
+    }
+
+    @Override
+    public boolean getSecFlagByPid(Long pid) {
+        LambdaQueryWrapper<Product> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Product::getId, pid).select(Product::getSecFlag);
+        Product one = this.getOne(queryWrapper);
+        return one.getSecFlag();
+    }
+
+    @Override
+    public void setSecTime(SecTimeInfo secTimeInfo) {
+
+        /*
+        验证是否是该店主的商品，防止恶意修改
+        验证时间是否合法
+        secFlag true 缓存中放数据 false 修改数据库
+        */
+        boolean b = skuService.checkEditorByPid(secTimeInfo.getPid());
+        if (!b) {
+            //TODO AOP
+            throw new AccessControlException("非法更改");
+        }
+        if (secTimeInfo.isSecFlag()) {
+            try {
+                redisTemplate.opsForValue().set("sec_time:" + secTimeInfo.getPid(),
+                        objectMapper.writeValueAsString(secTimeInfo));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            LambdaUpdateWrapper<Product> updateWrapper = new LambdaUpdateWrapper<>();
+            updateWrapper.eq(Product::getId, secTimeInfo.getPid()).set(Product::getSecFlag,
+                    secTimeInfo.isSecFlag());
+            this.update(null, updateWrapper);
+        }
+    }
+
+    @Override
+    public String getSecTime(long pid) {
+        return redisTemplate.opsForValue().get("sec_time:" + pid);
+    }
+
+
 }

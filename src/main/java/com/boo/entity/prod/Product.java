@@ -1,4 +1,4 @@
-package com.boo.entity;
+package com.boo.entity.prod;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -18,16 +18,17 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("sys_prod")
+@TableName("t_prod")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Product {
     @TableId(type = IdType.AUTO)
     Long id;
+    Long mid;
     String prodName;
     Boolean status;
     Boolean secFlag;
     Timestamp createTime;
+    @TableField(exist = false)
     Double price;
     String img;
-    Long stock;
 }

@@ -43,40 +43,24 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // if(StringUtils.hasText(request.getHeader("Sec-WebSocket-Extensions")))
-        // {
-        //
-        //     filterChain.doFilter(request, response);
-        //     log.info("websocket");
-        //     return;
-        // }
-        if (StringUtils.hasText(request.getHeader("Sec-WebSocket-Extensions")) ||
-                StringUtils.hasText(request.getHeader("Sec-WebSocket-Protocol"))) {
-            String header = request.getHeader("Sec-WebSocket-Protocol");
-            log.info("websocket:<{}>", header);
-            filterChain.doFilter(request, response);
-            return;
-        }
         //1 先获取header 中的 jwt
         String jwtToken = request.getHeader("token");
         if (!StringUtils.hasText(jwtToken)) {
             filterChain.doFilter(request, response);
-            log.info("no token");
             return;
         }
         //2 存在则解析 解析失败后放行打印日志
-        String s;
+        String subject = "";
         try {
             Claims claims = JwtUtil.parseJWT(jwtToken);
-            s = claims.getSubject();
+            subject = claims.getSubject();
         } catch (ExpiredJwtException e) {
-            // e.printStackTrace();
             log.info("JWT ExpiredJwtException");
             filterChain.doFilter(request, response);
             return;
         }
         //4 从redis中获取信息
-        String userSerialization = redisTemplate.opsForValue().get("login:" + s);
+        String userSerialization = redisTemplate.opsForValue().get("login:" + subject);
         //如果redis中不存在 ...
         if (!StringUtils.hasText(userSerialization)) {
             log.info("user isn't login");
@@ -85,7 +69,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         LoginUserDetails userDetails = objectMapper.readValue(userSerialization,
                 LoginUserDetails.class);
-        // TODO 添加权限
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userDetails, null,
                         userDetails.getAuthorities());

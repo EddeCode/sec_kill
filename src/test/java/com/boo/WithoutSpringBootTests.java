@@ -2,12 +2,16 @@ package com.boo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 /**
  * @author song
@@ -35,5 +39,14 @@ public class WithoutSpringBootTests {
                 , true);//autoflush
         writer.println(stringBuilder);
     }
+    @Test
+    void testTimeStamp(){
+        System.out.println(Timestamp.from(Instant.now()).getTime());
+    }
 
+    @Test
+    void sss() throws FileNotFoundException {
+        URL url = ResourceUtils.getURL("classpath:not_payed.lua");
+        System.out.println(url);
+    }
 }

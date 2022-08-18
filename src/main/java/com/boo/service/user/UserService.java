@@ -1,5 +1,7 @@
 package com.boo.service.user;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.boo.entity.ResponseResult;
 import com.boo.entity.user.User;
@@ -21,4 +23,10 @@ public interface UserService extends IService<User> {
 
 
     User getUserInfo();
+
+    User getUserInSecurityContext();
+
+    long getUidInSecurityContext();
+
+
 }

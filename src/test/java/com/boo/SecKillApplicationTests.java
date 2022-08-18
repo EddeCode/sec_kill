@@ -1,9 +1,14 @@
 package com.boo;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boo.entity.user.User;
-import com.boo.mapper.user.MenuMapper;
+import com.boo.mapper.PdClassMapper;
+import com.boo.mapper.PdSkuMapper;
 import com.boo.mapper.ProductMapper;
+import com.boo.mapper.user.MenuMapper;
+import com.boo.service.user.IOrderService;
+import com.boo.service.IPdClassService;
 import com.boo.service.ProdService;
 import com.boo.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +27,7 @@ class SecKillApplicationTests {
     @Autowired
     UserService service;
 
-    @Test
-    void getImg() {
-    }
+
     @Test
     void contextLoads() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
@@ -39,7 +40,7 @@ class SecKillApplicationTests {
 
     @Test
     void sqlTest() {
-        System.out.println(mapper.getMenuList(2L));
+        System.out.println(mapper.getMenuList(1L));
     }
 
     @Autowired
@@ -47,15 +48,10 @@ class SecKillApplicationTests {
 
     @Test
     void pTest() {
-        System.out.println(productMapper.getSummaryProducts());
+        System.out.println(prodService.summaryList());
     }
-    @Test
-    void spTest()
-    {
-        Map<String, String> specParams = Map.of("size","1","color","2");
-        Map<String, String> stringStringMap = Map.of("size","1","color","1");
-        System.out.println(specParams.equals(stringStringMap));
-    }
+
+
 
     @Autowired
     ProdService prodService;
@@ -73,9 +69,9 @@ class SecKillApplicationTests {
 
     @Autowired
     DefaultRedisScript<Long> defaultRedisScript;
+
     @Test
-    void res()
-    {
+    void res() {
         System.out.println(defaultRedisScript.getScriptAsString());
     }
 
@@ -83,8 +79,71 @@ class SecKillApplicationTests {
     @Test
     void parse() throws JsonProcessingException {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("userId",1);
-        map.put("msg",null);
+        map.put("userId", 1);
+        map.put("msg", null);
         System.out.println(objectMapper.writeValueAsString(map));
+    }
+
+
+    @Autowired
+    IPdClassService pdClassService;
+
+    @Test
+    void ll() {
+        System.out.println(pdClassService.getClassListByPid(1L));
+    }
+
+    @Autowired
+    IOrderService orderService;
+
+    @Test
+    void testOrder() {
+        System.out.println(orderService.list());
+    }
+
+    @Autowired
+    PdClassMapper pdClassMapper;
+
+    @Test
+    void testGetClassJoinTagByPid() {
+        System.out.println(pdClassMapper.getClassJoinTagByPid(1L));
+    }
+
+    @Autowired
+    PdSkuMapper skuMapper;
+
+    /**
+     * IPdClassService.getClassListByPid
+     * 测试一次访问数据库完成映射转换
+     */
+    @Test
+    void testGetClassListByPid() throws JsonProcessingException {
+        System.out.println(objectMapper.writeValueAsString(pdClassService.getClassListByPid(1L)));
+    }
+
+    /**
+     * ProdServiceImpl.summaryList
+     */
+    @Test
+    void testSummaryList(){
+        System.out.println(prodService.summaryList());
+    }
+
+    @Autowired
+    MenuMapper menuMapper;
+    /**
+     * MenuMapper.getRoleList
+     */
+    @Test
+    void testMenuMapper(){
+        System.out.println(menuMapper.getRoleList(1L));
+    }
+
+    @Autowired
+    UserService userService;
+    @Test
+    void testPage(){
+        Page<User> page = userService.page(new Page<User>(1, 10));
+        System.out.println(page);
     }
 }

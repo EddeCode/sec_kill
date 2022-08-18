@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Bean
     public PasswordEncoder getEncoder() {
         return new BCryptPasswordEncoder();
@@ -55,14 +55,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 // 对于登录接口 允许匿名访问
-                .antMatchers("/user/login", "/user/getCode", "/user/register").anonymous()
-                .antMatchers("/hello", "/prods","/nor/**","/user/getAvatar/**").permitAll()
+                .antMatchers("/user/login", "/swagger**/**","/v3/**",
+                        "/user/getCode", "/user/register", "/prod/simulatePayment/**").anonymous()
+                .antMatchers("/hello", "/prods", "/nor/**", "/user/getAvatar/**", "/file/skuImg" +
+                        "/**").permitAll()
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated();
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/ws/**");
-    }
+
 }

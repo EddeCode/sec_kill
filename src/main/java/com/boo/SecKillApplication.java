@@ -18,7 +18,7 @@ public class SecKillApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext run = SpringApplication.run(SecKillApplication.class, args);
-        System.out.println("Run Successful");
+        System.out.println("Run Successful \n swagger : swagger-ui/index.html");
     }
 
 }

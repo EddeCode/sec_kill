@@ -1,6 +1,8 @@
 package com.boo.service.impl.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boo.entity.ResponseResult;
 import com.boo.entity.user.LoginUserDetails;
@@ -154,12 +156,21 @@ public class UserServiceImpl
         return new ResponseResult(200, "ok", rand);
     }
 
-    private User getUserInSecurityContext() {
+    @Override
+    public User getUserInSecurityContext() {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         LoginUserDetails loginUserDetails = (LoginUserDetails) authentication.getPrincipal();
         return loginUserDetails.getUser();
     }
+
+    @Override
+    public long getUidInSecurityContext() {
+        return getUserInSecurityContext().getId();
+    }
+
+
+
 
     @Override
     public User getUserInfo() {
