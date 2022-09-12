@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Objects;
 
 /**
  * 高级的发布确认
@@ -40,6 +41,9 @@ public class CustomCallBack
      */
     @Override
     public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+        if (Objects.isNull(correlationData)) {
+            return;
+        }
         if (ack) {
             log.info("id:{};接受成功", correlationData.getId());
         } else {

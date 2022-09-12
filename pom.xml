@@ -109,18 +109,6 @@
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
-
-        <!--TODO 支付宝还未实装-->
-        <dependency>
-            <groupId>com.alipay.sdk</groupId>
-            <artifactId>alipay-sdk-java</artifactId>
-            <version>4.13.50.ALL</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alipay.sdk</groupId>
-            <artifactId>alipay-easysdk</artifactId>
-            <version>2.1.2</version>
-        </dependency>
         <!--  工具包，请求头contentType和类型转换-->
         <dependency>
             <groupId>org.apache.tika</groupId>
@@ -132,7 +120,7 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.8</version>
         </dependency>
-        <!-- 工具包 hutools-->
+        <!-- 工具包 hutool-->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>

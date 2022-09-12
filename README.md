@@ -1,6 +1,6 @@
 <span style="color:#FF4800;font-size:50px;font-weight:900">MS商城</span>
 
-<span style="color:#aaa">MULTIVERSE SHOP</span>
+<span style="color:#aaa">MS SHOP</span>
 
 ---
 
@@ -14,4 +14,3 @@
 1. mysql8,可以为低版本，需要自己改写配置文件
 2. redis
 3. rabbitMq,需要用到延迟队列插件
-4.商店需要自己添加

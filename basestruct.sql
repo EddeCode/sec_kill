@@ -1,4 +1,4 @@
-drop database mall ;
+drop database mall;
 CREATE
     database mall;
 USE
@@ -50,6 +50,22 @@ CREATE TABLE `sys_menu`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='menu?';
 
+INSERT INTO mall.sys_menu (id, menu_name, path, component, visible, status, perms, icon, create_by, create_time,
+                           update_by, update_time, del_flag, remark)
+VALUES (1, '普通用户权限', null, null, '0', '1', 'sys.scan', '#', null, null, null, null, 0, null);
+INSERT INTO mall.sys_menu (id, menu_name, path, component, visible, status, perms, icon, create_by, create_time,
+                           update_by, update_time, del_flag, remark)
+VALUES (2, '更新上哦权限', null, null, '0', '1', 'sys.update', '#', null, null, null, null, 0, null);
+INSERT INTO mall.sys_menu (id, menu_name, path, component, visible, status, perms, icon, create_by, create_time,
+                           update_by, update_time, del_flag, remark)
+VALUES (3, '删除商品权限', null, null, '0', '1', 'sys.del', '#', null, null, null, null, 0, null);
+INSERT INTO mall.sys_menu (id, menu_name, path, component, visible, status, perms, icon, create_by, create_time,
+                           update_by, update_time, del_flag, remark)
+VALUES (4, '商店拥有者', null, null, '0', '1', 'sys.mowner', '#', null, null, null, null, 0, null);
+INSERT INTO mall.sys_menu (id, menu_name, path, component, visible, status, perms, icon, create_by, create_time,
+                           update_by, update_time, del_flag, remark)
+VALUES (5, '浏览商店商品', null, null, '0', '1', 'sys.mscan', '#', null, null, null, null, 0, null);
+
 
 /*Table structure for table `sys_merchant` */
 
@@ -85,6 +101,14 @@ CREATE TABLE `sys_role`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4;
+
+
+INSERT INTO mall.sys_role (id, name, role_key, status, del_flag, create_by, create_time, update_by, update_time, remark)
+VALUES (1, 'admin', 'admin', '0', 0, null, null, null, null, null);
+INSERT INTO mall.sys_role (id, name, role_key, status, del_flag, create_by, create_time, update_by, update_time, remark)
+VALUES (2, 'user', 'user', '0', 0, null, null, null, null, null);
+INSERT INTO mall.sys_role (id, name, role_key, status, del_flag, create_by, create_time, update_by, update_time, remark)
+VALUES (3, 'merchant', 'merchant', '0', 0, null, null, null, null, null);
 
 
 /*Table structure for table `sys_role_menu` */
@@ -139,11 +163,12 @@ CREATE TABLE `sys_user`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
 
-/*Data for the table `sys_user` */
+/*Data for the table `sys_user` pass 123456 */
 
 insert into `sys_user`(`id`, `user_name`, `nick_name`, `password`, `status`, `email`, `phonenumber`, `sex`, `avatar`,
                        `user_type`, `create_by`, `create_time`, `update_by`, `update_time`, `del_flag`)
-values (6, 'admin', 'NULL', '$2a$10$hvrXH3RbRl17.eqvbVnh7uBgw0pHfwIotYVUFMC7yUrMyxKcedBee', '0', NULL, NULL, NULL, NULL,
+values (null, 'admin', 'NULL', '$2a$10$hvrXH3RbRl17.eqvbVnh7uBgw0pHfwIotYVUFMC7yUrMyxKcedBee', '0', NULL, NULL, NULL,
+        NULL,
         '1', NULL, NULL, NULL, NULL, 0);
 
 /*Table structure for table `sys_user_role` */
@@ -158,6 +183,7 @@ CREATE TABLE `sys_user_role`
   DEFAULT CHARSET = utf8mb4;
 
 /*Data for the table `sys_user_role` */
+INSERT INTO mall.sys_user_role (user_id, role_id) VALUES (1, 1);
 
 /*Table structure for table `t_pd_class` */
 
@@ -200,7 +226,6 @@ CREATE TABLE `t_pd_sku`
     `price` double               DEFAULT '0'
 ) ENGINE = MyISAM
   DEFAULT CHARSET = utf8;
-
 
 
 /*Table structure for table `t_pd_tag` */

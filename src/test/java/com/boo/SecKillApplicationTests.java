@@ -2,15 +2,16 @@ package com.boo;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.boo.entity.user.User;
-import com.boo.mapper.PdClassMapper;
-import com.boo.mapper.PdSkuMapper;
-import com.boo.mapper.ProductMapper;
-import com.boo.mapper.user.MenuMapper;
-import com.boo.service.user.IOrderService;
-import com.boo.service.IPdClassService;
-import com.boo.service.ProdService;
-import com.boo.service.user.UserService;
+import com.boo.order.entity.Order;
+import com.boo.order.service.OrderService;
+import com.boo.user.entity.User;
+import com.boo.prod.mapper.PdClassMapper;
+import com.boo.prod.mapper.PdSkuMapper;
+import com.boo.prod.mapper.ProductMapper;
+import com.boo.user.mapper.MenuMapper;
+import com.boo.prod.service.IPdClassService;
+import com.boo.prod.service.ProdService;
+import com.boo.user.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SecKillApplicationTests {
@@ -94,7 +94,7 @@ class SecKillApplicationTests {
     }
 
     @Autowired
-    IOrderService orderService;
+    OrderService orderService;
 
     @Test
     void testOrder() {
@@ -145,5 +145,10 @@ class SecKillApplicationTests {
     void testPage(){
         Page<User> page = userService.page(new Page<User>(1, 10));
         System.out.println(page);
+    }
+
+    @Test
+    void testE(){
+        System.out.println(Order.Type.NORMAL);
     }
 }

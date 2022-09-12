@@ -1,0 +1,52 @@
+package com.boo.prod.entity;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
+import java.sql.Blob;
+
+import com.baomidou.mybatisplus.annotation.Version;
+import lombok.*;
+
+/**
+ * <p>
+ * 
+ * </p>
+ *
+ * @author song
+ * @since 2022-05-07
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("t_pd_sku")
+public class PdSku implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    //最好还是有个主键id
+    /**
+     * 商品id
+     */
+    private Long pid;
+
+    /**
+     * 商品掩码
+     */
+    private String mask;
+
+    /**
+     * 图片
+     */
+    private String img;
+
+    /**
+     * 存货
+     */
+    private Integer stock;
+
+    /**
+     * 价格
+     */
+    private Double price;
+
+
+}

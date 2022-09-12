@@ -1,7 +1,7 @@
 package com.boo.security;
 
-import com.boo.entity.ResponseResult;
-import com.boo.utils.WebUtils;
+import com.boo.common.ResponseResult;
+import com.boo.common.utils.WebUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

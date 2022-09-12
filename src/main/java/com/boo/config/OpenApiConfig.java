@@ -14,7 +14,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI initOpenAPI() {
         return new OpenAPI().info(
-                new Info().title("MULTIVERSE SHOP API").description("OpenAPI").version("v1.0")
+                new Info().title("MS SHOP API").description("OpenAPI")
         );
     }
 }
