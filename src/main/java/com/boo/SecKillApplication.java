@@ -14,7 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @ServletComponentScan
 @SpringBootApplication
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
-@MapperScan("com.boo.*.mapper")
+@MapperScan("com.boo.mapper")
 @Slf4j
 public class SecKillApplication {
 

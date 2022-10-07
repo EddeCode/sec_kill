@@ -1,6 +1,6 @@
 package com.boo.filter;
 
-import com.boo.user.entity.LoginUserDetails;
+import com.boo.entity.LoginUserDetails;
 import com.boo.common.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;

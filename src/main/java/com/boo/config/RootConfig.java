@@ -1,7 +1,7 @@
 package com.boo.config;
 
-import com.boo.file.controller.FileController;
-import com.boo.prod.service.ProdService;
+import com.boo.controller.FileController;
+import com.boo.service.ProdService;
 import org.apache.tika.mime.MimeTypes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
